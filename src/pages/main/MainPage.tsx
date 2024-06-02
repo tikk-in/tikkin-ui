@@ -3,7 +3,7 @@ import {Card, Flex, Input} from 'antd';
 import {SendOutlined} from "@ant-design/icons";
 import {validateUrl} from "../../utils/url.ts";
 import LinksTable from "../../components/links/LinksTable.tsx";
-import useApi from "../../context/ApiContext.tsx";
+import useApi from "../../hooks/ApiContext.tsx";
 
 const {Search} = Input;
 
@@ -21,7 +21,7 @@ const MainPage: React.FC = () => {
     <>
       <Flex vertical>
         <Flex justify={"center"}>
-          <div style={{width: '50%'}}>
+          <div style={{minWidth: '300px', width: '50%'}}>
             <Search addonBefore={<SendOutlined/>} placeholder="Enter Long URL" size="large" loading={loading}
                     enterButton={"Shorten!"}
                     onChange={(e) => setInputValue(e.target.value)}

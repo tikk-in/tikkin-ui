@@ -3,9 +3,9 @@ import {Button, Col, Flex, Form, Input, Row, theme} from 'antd';
 import {LockOutlined, UserOutlined} from '@ant-design/icons';
 import {Link, useNavigate} from "react-router-dom";
 import {useMutation} from "@tanstack/react-query";
-import {useAuth} from "../../context/AuthContext.tsx";
+import {useAuth} from "../../hooks/AuthContext.tsx";
 import {AxiosResponse} from "axios";
-import useApi from "../../context/ApiContext.tsx";
+import useApi from "../../hooks/ApiContext.tsx";
 
 export interface LoginResult {
   token: string;

@@ -1,12 +1,13 @@
 import React, {useEffect} from 'react';
-import {Button, GetProp, Modal, Space, Table, TablePaginationConfig, TableProps} from 'antd';
-import {DeleteOutlined, EditFilled, ExclamationCircleFilled, ExportOutlined} from "@ant-design/icons";
+import {Button, GetProp, Modal, notification, Space, Table, TablePaginationConfig, TableProps, Tooltip} from 'antd';
+import {CopyOutlined, DeleteOutlined, EditFilled, ExclamationCircleFilled, ExportOutlined} from "@ant-design/icons";
 import {formatRelative} from 'date-fns';
 import {BASE_URL} from "../../config.ts";
-import useApi from "../../context/ApiContext.tsx";
+import useApi from "../../hooks/ApiContext.tsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {LinkModel} from "../../model/LinkModel.ts";
 import EditLinkModal from "./EditLinkModal.tsx";
+import {useScreenDetector} from "../../hooks/ScreenDetector.tsx";
 
 const {Column,} = Table;
 const {confirm} = Modal;
@@ -49,6 +50,8 @@ const LinksTable: React.FC<LinksTableProps> = (
     }) => {
 
     const api = useApi();
+    const {isDesktop} = useScreenDetector();
+
     const [data, setData] = React.useState<LinkItem[]>([]);
     const [loading, setLoading] = React.useState(false);
 
@@ -60,6 +63,7 @@ const LinksTable: React.FC<LinksTableProps> = (
         pageSize: 10,
       },
     });
+    const [notificationApi, contextHolder] = notification.useNotification();
 
     const query = useQuery({
       queryKey: ['links'], queryFn: async () => {
@@ -117,6 +121,7 @@ const LinksTable: React.FC<LinksTableProps> = (
     };
 
     return (<>
+        {contextHolder}
         <EditLinkModal open={isEditOpen} link={editLinkObject} handleOk={async () => {
           setIsEditOpen(false);
           await query.refetch();
@@ -124,25 +129,40 @@ const LinksTable: React.FC<LinksTableProps> = (
           setIsEditOpen(false);
         }}/>
         <Table dataSource={data} style={{width: '100%'}} loading={loading} onChange={handleTableChange}
-               pagination={tableParams.pagination}>
+               pagination={tableParams.pagination}
+               size="small"
+        >
           <Column title="Link" dataIndex="slug" key="slug" render={(value) => {
             return (
               <div style={{display: "flex"}}>
-                <a href={`${BASE_URL}/${value}`} target="_blank" style={{textOverflow: "ellipsis"}}>{BASE_URL}/{value}</a>
-                <ExportOutlined style={{marginLeft: '4px'}}/>
+                <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+                  <a href={`${BASE_URL}/${value}`} target="_blank"
+                     style={{textOverflow: "ellipsis"}}>{BASE_URL}/{value}
+                  </a>
+                  <ExportOutlined style={{marginLeft: '4px'}}/>
+                </div>
+                {isDesktop && (
+                  <div style={{marginLeft: '2px'}}>
+                    <Tooltip title="copy to clipboard">
+                      <Button type="text" icon={<CopyOutlined/>} onClick={() => {
+                        navigator.clipboard.writeText(`${BASE_URL}/${value}`);
+                        notificationApi.info({message: 'Copied to clipboard', placement: 'bottomRight'});
+                      }}/>
+                    </Tooltip>
+                  </div>)}
               </div>);
           }}/>
-          <Column title="Description" dataIndex="description" key="description" render={(value) => {
+          <Column title="Description" dataIndex="description" responsive={["lg"]} key="description" render={(value) => {
             if (!value) return '-';
             return value;
           }}/>
           <Column title="Target" dataIndex="target_url" key="target_url"/>
-          <Column title="Expire" dataIndex="expire_at" key="expire_at" render={(value,) => {
+          <Column title="Expire" dataIndex="expire_at" responsive={["lg"]} key="expire_at" render={(value,) => {
             if (!value) return 'Never';
             return formatRelative(value, new Date());
           }}/>
-          <Column title="Visits" dataIndex="visits" key="visits"/>
-          <Column title="Created at" dataIndex="created_at" key="created_at" render={(value) => {
+          <Column title="Visits" dataIndex="visits" responsive={["lg"]} key="visits"/>
+          <Column title="Created at" dataIndex="created_at" responsive={["lg"]} key="created_at" render={(value) => {
             return formatRelative(value, new Date());
           }}/>
           <Column

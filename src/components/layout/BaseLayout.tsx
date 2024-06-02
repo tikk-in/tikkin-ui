@@ -1,6 +1,6 @@
 import React from 'react';
 import {Layout, Menu, theme} from 'antd';
-import {useAuth} from "../../context/AuthContext.tsx";
+import {useAuth} from "../../hooks/AuthContext.tsx";
 
 const {Header, Content, Footer} = Layout;
 

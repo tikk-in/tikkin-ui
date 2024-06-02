@@ -1,6 +1,6 @@
 import LoginPage from "./pages/login/Login.tsx";
 import MainPage from "./pages/main/MainPage.tsx";
-import PrivateRoute from "./context/PrivateRoute.tsx";
+import PrivateRoute from "./hooks/PrivateRoute.tsx";
 import {createBrowserRouter, Navigate} from "react-router-dom";
 
 const router = createBrowserRouter([
