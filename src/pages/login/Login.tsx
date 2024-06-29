@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Col, Flex, Form, Input, Row, theme} from 'antd';
+import {Button, Col, Flex, Form, Input, notification, Row, theme} from 'antd';
 import {LockOutlined, UserOutlined} from '@ant-design/icons';
 import {Link, useNavigate} from "react-router-dom";
 import {useMutation} from "@tanstack/react-query";
@@ -24,6 +24,7 @@ const LoginPage: React.FC<LoginPageProps> = (
   const auth = useAuth();
   const navigate = useNavigate();
   const api = useApi();
+  const [notificationApi, contextHolder] = notification.useNotification();
 
   React.useEffect(() => {
     if (auth && auth.token) {
@@ -40,6 +41,21 @@ const LoginPage: React.FC<LoginPageProps> = (
       setLoading(false);
       auth.updateToken(result.data.token);
       navigate('/main')
+    },
+    onError: (error) => {
+      console.log('error', error);
+      setLoading(false);
+    }
+  })
+
+  const signUpMutation = useMutation({
+    mutationFn: (login: unknown) => {
+      setLoading(true);
+      return api.post('/v1/auth/signup', login);
+    },
+    onSuccess: (_: AxiosResponse<LoginResult>) => {
+      setLoading(false);
+      notificationApi.info({message: 'Success! Check your email', placement: 'bottomRight'});
     },
     onError: (error) => {
       console.log('error', error);
@@ -67,6 +83,7 @@ const LoginPage: React.FC<LoginPageProps> = (
         borderRadius: borderRadiusLG,
       }}
     >
+      {contextHolder}
       <Row>
         <Col xs={{span: 5, offset: 1}} lg={{span: 6, offset: 2}}>
         </Col>
@@ -99,10 +116,19 @@ const LoginPage: React.FC<LoginPageProps> = (
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="button" style={{width: '100%'}} loading={loading}
-                        onClick={() => loginMutation.mutate({
-                          "email": form.getFieldValue("email"),
-                          "password": form.getFieldValue("password")
-                        })}>
+                        onClick={() => {
+                          if (isSignUp) {
+                            signUpMutation.mutate({
+                              "email": form.getFieldValue("email"),
+                              "password": form.getFieldValue("password")
+                            })
+                          } else {
+                            loginMutation.mutate({
+                              "email": form.getFieldValue("email"),
+                              "password": form.getFieldValue("password")
+                            })
+                          }
+                        }}>
                   {isSignUp ? 'Sign Up' : 'Log in'}
                 </Button>
               </Form.Item>
