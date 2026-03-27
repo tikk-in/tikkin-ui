@@ -50,8 +50,8 @@ __metadata:
   linkType: hard
 
 "@ant-design/icons@npm:^5.3.7":
-  version: 5.4.0
-  resolution: "@ant-design/icons@npm:5.4.0"
+  version: 5.6.1
+  resolution: "@ant-design/icons@npm:5.6.1"
   dependencies:
     "@ant-design/colors": "npm:^7.0.0"
     "@ant-design/icons-svg": "npm:^4.4.0"
@@ -61,7 +61,7 @@ __metadata:
   peerDependencies:
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: 10c0/fcd310c0f9b88d716cbb7c450e6e7b40b0686e3c902e8c50f117492a1677c6a98f2f9bef55ff7e1ee997e19d5d81959379c1a6bb4fd2412365b252e3e92b9456
+  checksum: 10c0/7a9d9fd388c5c66d92818fd0eb794a54ef0b0dc3d75f15ac24c7cfde21c5c836c220cf35423768fd1faa28d55443a6917bf4260469c1485be83f799daa351976
   languageName: node
   linkType: hard
 
